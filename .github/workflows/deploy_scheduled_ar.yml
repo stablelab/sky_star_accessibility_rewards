@@ -1,0 +1,90 @@
+name: Deploy StableAgent Backend (Main)
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  deploy:
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - uses: "actions/checkout@v4"
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "projects/598621312508/locations/global/workloadIdentityPools/github/providers/my-github-repo-provider"
+          service_account: "github-cloud-function-deploy@pegasus-394017.iam.gserviceaccount.com"
+
+      - name: Configure Google Cloud SDK
+        run: gcloud config set project pegasus-394017
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and Push Image for Main
+        run: |
+          IMAGE_TAG=${{ github.ref_name }}
+          docker build -t us-central1-docker.pkg.dev/pegasus-394017/cloud-run-source-deploy/sky-accessibility-rewards/sky-accessibility-rewards:${{ github.ref_name }} -f Dockerfile .
+          docker push us-central1-docker.pkg.dev/pegasus-394017/cloud-run-source-deploy/sky-accessibility-rewards/sky-accessibility-rewards:${{ github.ref_name }}
+
+      - name: Deploy to Cloud Run (Main)
+        run: |
+          gcloud run deploy sky-accessibility-rewards \
+            --image us-central1-docker.pkg.dev/pegasus-394017/cloud-run-source-deploy/sky-accessibility-rewards/sky-accessibility-rewards:${{ github.ref_name }} \
+            --region us-central1 \
+            --platform managed \
+            --allow-unauthenticated \
+            --vpc-connector "pegasus-db-connect" \
+            --update-secrets "THIRDWEB_AUTH_PRIVATE_KEY=projects/598621312508/secrets/THIRDWEB_AUTH_PRIVATE_KEY_MAIN" \
+            --update-secrets "STABLELAB_TOKEN=projects/598621312508/secrets/STABLELAB_TOKEN" \
+            --update-secrets "DATABASE_PASSWORD=projects/598621312508/secrets/DATABASE_PASSWORD" \
+            --update-secrets "DATABASE_URL_MAIN=projects/598621312508/secrets/DATABASE_URL_MAIN" \
+            --update-secrets "DATABASE_URL=projects/598621312508/secrets/DATABASE_URL" \
+            --update-secrets "SNOWFLAKE_USER=projects/598621312508/secrets/SNOWFLAKE_USER" \
+            --update-secrets "SNOWFLAKE_PASSWORD=projects/598621312508/secrets/SNOWFLAKE_PASSWORD" \
+            --update-secrets "SNOWFLAKE_DATABASE=projects/598621312508/secrets/SNOWFLAKE_DATABASE" \
+            --update-secrets "SNOWFLAKE_ACCOUNT=projects/598621312508/secrets/SNOWFLAKE_ACCOUNT" \
+            --update-secrets "THIRDWEB_SECRET=projects/598621312508/secrets/THIRDWEB_SECRET_MAIN" \
+            --update-secrets "DATABASE_PASSWORD_MAIN=projects/598621312508/secrets/DATABASE_PASSWORD_MAIN" \
+            --update-secrets "REDIS_HOST=projects/598621312508/secrets/REDIS_HOST" \
+            --update-secrets "REDIS_PORT=projects/598621312508/secrets/REDIS_PORT" \
+            --update-secrets "RESET_TOKEN_STAGING=projects/598621312508/secrets/RESET_TOKEN_STAGING" \
+            --update-secrets "RESET_TOKEN_PROD=projects/598621312508/secrets/RESET_TOKEN_PROD" \
+            --update-secrets "SLACK_ALERT_HOOK=projects/598621312508/secrets/SLACK_ALERT_HOOK" \
+            --update-secrets "ACCESS_TOKEN_AR=projects/598621312508/secrets/ACCESS_TOKEN_AR" \
+            --update-env-vars "DATABASE_NAME=postgres, DATABASE_USER=postgres, DATABASE_PORT=1111" \
+            --update-env-vars "DATABASE_HOST=10.156.0.3, NEXT_PUBLIC_OXCART_CONTRACT=0xcA455e314326fd19C80887D1DE67Fb7721bf3D7D" \
+            --update-env-vars "THIRDWEB_AUTH_CLIENT_ID=7946fffe93f3feceaf70a007cfa016dd, THIRDWEB_AUTH_DOMAIN=https://dashboard.forse.io" \
+            --update-env-vars "ALLOWED_ORIGINS=.*, ENV_TYPE=production"
+
+      # - name: Deploy to compute instance
+      #   run: |
+      #     gcloud compute instances create sky-ar
+      #       --image us-central1-docker.pkg.dev/pegasus-394017/cloud-run-source-deploy/sky-accessibility-rewards/sky-accessibility-rewards:${{ github.ref_name }} \
+      #       --region us-central1 \
+      #       --platform managed \
+      #       --allow-unauthenticated \
+      #       --vpc-connector "pegasus-db-connect" \
+      #       --update-secrets "THIRDWEB_AUTH_PRIVATE_KEY=projects/598621312508/secrets/THIRDWEB_AUTH_PRIVATE_KEY_MAIN" \
+      #       --update-secrets "STABLELAB_TOKEN=projects/598621312508/secrets/STABLELAB_TOKEN" \
+      #       --update-secrets "DATABASE_PASSWORD=projects/598621312508/secrets/DATABASE_PASSWORD" \
+      #       --update-secrets "DATABASE_URL_MAIN=projects/598621312508/secrets/DATABASE_URL_MAIN" \
+      #       --update-secrets "DATABASE_URL=projects/598621312508/secrets/DATABASE_URL" \
+      #       --update-secrets "SNOWFLAKE_USER=projects/598621312508/secrets/SNOWFLAKE_USER" \
+      #       --update-secrets "SNOWFLAKE_PASSWORD=projects/598621312508/secrets/SNOWFLAKE_PASSWORD" \
+      #       --update-secrets "SNOWFLAKE_DATABASE=projects/598621312508/secrets/SNOWFLAKE_DATABASE" \
+      #       --update-secrets "SNOWFLAKE_ACCOUNT=projects/598621312508/secrets/SNOWFLAKE_ACCOUNT" \
+      #       --update-secrets "THIRDWEB_SECRET=projects/598621312508/secrets/THIRDWEB_SECRET_MAIN" \
+      #       --update-secrets "DATABASE_PASSWORD_MAIN=projects/598621312508/secrets/DATABASE_PASSWORD_MAIN" \
+      #       --update-secrets "REDIS_HOST=projects/598621312508/secrets/REDIS_HOST" \
+      #       --update-secrets "REDIS_PORT=projects/598621312508/secrets/REDIS_PORT" \
+      #       --update-env-vars "DATABASE_NAME=postgres, DATABASE_USER=postgres, DATABASE_PORT=1111" \
+      #       --update-env-vars "DATABASE_HOST=10.156.0.3, NEXT_PUBLIC_OXCART_CONTRACT=0xcA455e314326fd19C80887D1DE67Fb7721bf3D7D" \
+      #       --update-env-vars "ALLOWED_ORIGINS=.*, ENV_TYPE=production"
