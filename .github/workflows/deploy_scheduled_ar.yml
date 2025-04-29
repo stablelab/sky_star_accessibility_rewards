@@ -45,14 +45,11 @@ jobs:
             --update-secrets "THIRDWEB_AUTH_PRIVATE_KEY=projects/598621312508/secrets/THIRDWEB_AUTH_PRIVATE_KEY_MAIN" \
             --update-secrets "STABLELAB_TOKEN=projects/598621312508/secrets/STABLELAB_TOKEN" \
             --update-secrets "DATABASE_PASSWORD=projects/598621312508/secrets/DATABASE_PASSWORD" \
-            --update-secrets "DATABASE_URL_MAIN=projects/598621312508/secrets/DATABASE_URL_MAIN" \
-            --update-secrets "DATABASE_URL=projects/598621312508/secrets/DATABASE_URL" \
             --update-secrets "SNOWFLAKE_USER=projects/598621312508/secrets/SNOWFLAKE_USER" \
             --update-secrets "SNOWFLAKE_PASSWORD=projects/598621312508/secrets/SNOWFLAKE_PASSWORD" \
             --update-secrets "SNOWFLAKE_DATABASE=projects/598621312508/secrets/SNOWFLAKE_DATABASE" \
             --update-secrets "SNOWFLAKE_ACCOUNT=projects/598621312508/secrets/SNOWFLAKE_ACCOUNT" \
             --update-secrets "THIRDWEB_SECRET=projects/598621312508/secrets/THIRDWEB_SECRET_MAIN" \
-            --update-secrets "DATABASE_PASSWORD_MAIN=projects/598621312508/secrets/DATABASE_PASSWORD_MAIN" \
             --update-secrets "REDIS_HOST=projects/598621312508/secrets/REDIS_HOST" \
             --update-secrets "REDIS_PORT=projects/598621312508/secrets/REDIS_PORT" \
             --update-secrets "RESET_TOKEN_STAGING=projects/598621312508/secrets/RESET_TOKEN_STAGING" \
@@ -75,14 +72,11 @@ jobs:
       #       --update-secrets "THIRDWEB_AUTH_PRIVATE_KEY=projects/598621312508/secrets/THIRDWEB_AUTH_PRIVATE_KEY_MAIN" \
       #       --update-secrets "STABLELAB_TOKEN=projects/598621312508/secrets/STABLELAB_TOKEN" \
       #       --update-secrets "DATABASE_PASSWORD=projects/598621312508/secrets/DATABASE_PASSWORD" \
-      #       --update-secrets "DATABASE_URL_MAIN=projects/598621312508/secrets/DATABASE_URL_MAIN" \
-      #       --update-secrets "DATABASE_URL=projects/598621312508/secrets/DATABASE_URL" \
       #       --update-secrets "SNOWFLAKE_USER=projects/598621312508/secrets/SNOWFLAKE_USER" \
       #       --update-secrets "SNOWFLAKE_PASSWORD=projects/598621312508/secrets/SNOWFLAKE_PASSWORD" \
       #       --update-secrets "SNOWFLAKE_DATABASE=projects/598621312508/secrets/SNOWFLAKE_DATABASE" \
       #       --update-secrets "SNOWFLAKE_ACCOUNT=projects/598621312508/secrets/SNOWFLAKE_ACCOUNT" \
       #       --update-secrets "THIRDWEB_SECRET=projects/598621312508/secrets/THIRDWEB_SECRET_MAIN" \
-      #       --update-secrets "DATABASE_PASSWORD_MAIN=projects/598621312508/secrets/DATABASE_PASSWORD_MAIN" \
       #       --update-secrets "REDIS_HOST=projects/598621312508/secrets/REDIS_HOST" \
       #       --update-secrets "REDIS_PORT=projects/598621312508/secrets/REDIS_PORT" \
       #       --update-env-vars "DATABASE_NAME=postgres, DATABASE_USER=postgres, DATABASE_PORT=1111" \
